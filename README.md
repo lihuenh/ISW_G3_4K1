@@ -15,7 +15,7 @@ Repositorio del Grupo 3, para la materia Ingeniería de Software de UTN FRC año
           ├─── Filminas de Clases
           ├─── Presentaciones De Grupo
           └─── Trabajos Conceptuales
-> Para las carpetas usamos nombres en minúsculas y en vez de espacios guiones bajos. Ej: trabajos_conceptuales 
+> Para las carpetas usamos nombres en minúsculas y en vez de espacios, guiones bajos. Ej: trabajos_conceptuales 
 
 ## Items de Configuracion
 
