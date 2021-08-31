@@ -4,17 +4,17 @@ Repositorio del Grupo 3, para la materia Ingeniería de Software de UTN FRC año
 
 ## Estructura del Repositorio
      .
-     ├─── Lineamientos
-     ├─── Parciales
-     |    ├─── Herramientas
-     ├─── Practico
-     |    ├─── Evaluables
-     |    ├─── No Evaluables
-     └─── Teorico
-          ├─── Bibliografia
-          ├─── Filminas de Clases
-          ├─── Presentaciones De Grupo
-          └─── Trabajos Conceptuales
+     ├─── lineamientos
+     ├─── parciales
+     |    ├─── herramientas
+     ├─── practico
+     |    ├─── evaluables
+     |    ├─── no_evaluables
+     └─── teorico
+          ├─── bibliografia
+          ├─── filminas_de_clases
+          ├─── presentaciones_de_grupo
+          └─── trabajos_conceptuales
 > Para las carpetas usamos nombres en minúsculas y en vez de espacios, guiones bajos. Ej: trabajos_conceptuales 
 
 ## Items de Configuracion
