@@ -24,8 +24,12 @@ export default function LoQueSea() {
     "https://images-na.ssl-images-amazon.com/images/I/11Pl7si+xBL._SX331_BO1,204,203,200_.jpg"
   );
   const [date, setDate] = useState(new Date());
-  const [horaDesde, setHoraDesde] = useState("");
-  const [horaHasta, setHoraHasta] = useState("");
+  const [horaDesde, setHoraDesde] = useState("09:00");
+  const [horaHasta, setHoraHasta] = useState("10:00");
+  const [montoTotal, setMontoTotal] = useState(0);
+  const [montoProducto, setMontoProducto] = useState(0);
+  const [montoPagoEfectivo, setMontoPagoEfectivo] = useState(0);
+
   const {
     register,
     handleSubmit,
@@ -42,18 +46,80 @@ export default function LoQueSea() {
   };
   const handleShow = () => setShow(true);
 
+  const handlerMontoProducto = (monto) => {
+    console.log(monto.target.value);
+    setMontoTotal(150 * 5 + parseInt(monto.target.value));
+  };
+
   const handlerDate = (date) => {
     const today = new Date();
-
+    const restriccionDias = new Date();
+    restriccionDias.setDate(restriccionDias.getDate() + 15);
+    // console.log(`Adding 15 days: ${restriccionDias}`);
     if (today > date) {
+      alert("No puede seleccionar una fecha menor a la actual.");
+      setDate(today);
+    } else if (date > restriccionDias) {
+      alert("La fecha de entrega debe ser menor a 15 días.");
       setDate(today);
     } else {
       setDate(date);
     }
   };
 
+  const handlerHoraDesde = (desde) => {
+    var arrDesde = desde.target.value.split(":");
+    if (horaHasta != "") {
+      var arrHasta = horaHasta.split(":");
+      if (
+        arrDesde[0] < arrHasta[0] ||
+        (arrDesde[0] == arrHasta[0] && arrDesde[1] < arrHasta[1])
+      ) {
+        setHoraDesde(desde.target.value);
+      } else {
+        alert("La Hora DESDE debe ser menor a la Hora HASTA");
+        const tiempoDesde = parseInt(arrHasta[0]) - 1;
+        const stringHoraDesde =
+          tiempoDesde.toString().length == 1 ? "0" + tiempoDesde : tiempoDesde;
+        const stringMinDesde =
+          arrHasta[1].toString().length == 1 ? "0" + arrHasta[1] : arrHasta[1];
+        setHoraDesde(`${stringHoraDesde}:${stringMinDesde}`);
+      }
+    } else {
+      setHoraDesde(desde.target.value);
+    }
+  };
+
+  const handlerHoraHasta = (hasta) => {
+    var arrHasta = hasta.target.value.split(":");
+
+    if (horaDesde != "") {
+      var arrDesde = horaDesde.split(":");
+      if (
+        arrDesde[0] < arrHasta[0] ||
+        (arrDesde[0] == arrHasta[0] && arrDesde[1] < arrHasta[1])
+      ) {
+        setHoraHasta(hasta.target.value);
+      } else {
+        alert("La Hora DESDE debe ser menor a la Hora HASTA");
+        const tiempoHasta = parseInt(arrDesde[0]) + 1;
+        const stringHoraHasta =
+          tiempoHasta.toString().length == 1 ? "0" + tiempoHasta : tiempoHasta;
+        const stringMinHasta =
+          arrDesde[1].toString().length == 1 ? "0" + arrDesde[1] : arrDesde[1];
+        setHoraHasta(`${stringHoraHasta}:${stringMinHasta}`);
+      }
+    } else {
+      setHoraHasta(hasta.target.value);
+    }
+  };
+
   const onSubmit = () => {
-    handleShow();
+    if (status == 1 && montoPagoEfectivo < montoTotal) {
+      alert("El MONTO de PAGO debe ser mayor al MONTO TOTAL.");
+    } else {
+      handleShow();
+    }
   };
 
   const radioHandler = (status) => {
@@ -137,7 +203,7 @@ export default function LoQueSea() {
                   ></img>
                 </div>
               </div>
-              <div className="d-flex w-100 ">
+              <div className="d-flex w-100 mb-3">
                 <input
                   type="file"
                   name="image-upload"
@@ -365,10 +431,12 @@ export default function LoQueSea() {
                           <input
                             type="time"
                             className="form-control"
+                            value={horaDesde}
                             id="horaDesde"
                             {...register("horaDesde", {
                               required: "Rango hora desde requerida.",
                             })}
+                            onChange={(desde) => handlerHoraDesde(desde)}
                           />
                           {errors.horaDesde && (
                             <small className="text-danger">
@@ -383,10 +451,12 @@ export default function LoQueSea() {
                           <input
                             type="time"
                             className="form-control"
+                            value={horaHasta}
                             id="horaHasta"
                             {...register("horaHasta", {
                               required: "Rango hora hasta requerida.",
                             })}
+                            onChange={(hasta) => handlerHoraHasta(hasta)}
                           />
                           {errors.horaHasta && (
                             <small className="text-danger">
@@ -409,6 +479,61 @@ export default function LoQueSea() {
               }}
             >
               <h3>Paso 5: Datos de Pago</h3>
+              <hr style={{ color: "gray" }} />
+              <div className="">
+                <label htmlFor="montoProducto" className="form-label">
+                  Costo Producto
+                </label>
+                <div
+                  className="input-group mb-3"
+                  id="montoProducto"
+                  style={{ width: "30%" }}
+                >
+                  <span className="input-group-text">$</span>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="valorMontoProducto"
+                    {...register("valorMontoProducto", {
+                      required: "Monto del producto es requerido.",
+                    })}
+                    onChange={(monto) => handlerMontoProducto(monto)}
+                  />
+                </div>
+                {errors.valorMontoProducto && (
+                  <small className="text-danger">
+                    {errors.valorMontoProducto.message}
+                  </small>
+                )}
+              </div>
+              <div className="mb-3" style={{ width: "30%" }}>
+                <label htmlFor="costoEnvio" className="form-label">
+                  Costo Envío
+                </label>
+                <div className="input-group" id="costoEnvio">
+                  <span className="input-group-text">$</span>
+                  <input
+                    type="number"
+                    className="form-control"
+                    disabled={true}
+                    value={150 * 5}
+                  />
+                </div>
+              </div>
+              <div style={{ width: "30%" }}>
+                <label htmlFor="montoProducto" className="form-label">
+                  Costo Total
+                </label>
+                <div className="input-group" id="montoProducto">
+                  <span className="input-group-text">$</span>
+                  <input
+                    type="number"
+                    className="form-control"
+                    disabled={true}
+                    value={montoTotal}
+                  />
+                </div>
+              </div>
               <hr style={{ color: "gray" }} />
 
               <div className="form-check">
@@ -447,7 +572,11 @@ export default function LoQueSea() {
                     <label htmlFor="importe" className="form-label">
                       Monto pago
                     </label>
-                    <div className="input-group w-50" id="importe">
+                    <div
+                      className="input-group"
+                      id="importe"
+                      style={{ width: "30%" }}
+                    >
                       <span className="input-group-text">$</span>
                       <input
                         type="number"
@@ -455,6 +584,9 @@ export default function LoQueSea() {
                         {...register("monto", {
                           required: "Monto requerido.",
                         })}
+                        onChange={(montoPago) =>
+                          setMontoPagoEfectivo(montoPago.target.value)
+                        }
                       />
                     </div>
                     {errors.monto && (
